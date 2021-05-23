@@ -10,3 +10,5 @@ kubeconfig
 
 # Local .DS_Store
 **/.DS_Store
+
+.idea
