@@ -9,7 +9,7 @@ variable "subnets" {
 variable "kubernetes_version" {
   description = "The target version of kubernetes"
   type        = string
-  default     = "1.17"
+  default     = "1.19"
 }
 
 variable "node_groups" {
@@ -30,6 +30,13 @@ variable "fargate_profiles" {
 ### feature
 variable "enabled_cluster_log_types" {
   description = "A list of the desired control plane logging to enable"
+  type        = list(string)
+  default     = []
+}
+
+### security
+variable "policy_arns" {
+  description = "A list of policy ARNs to attach the node groups role"
   type        = list(string)
   default     = []
 }

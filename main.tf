@@ -1,5 +1,7 @@
 ## managed kubernetes cluster
 
+data "aws_partition" "current" {}
+
 ## features
 locals {
   node_groups_enabled         = (var.node_groups != null ? ((length(var.node_groups) > 0) ? true : false) : false)
@@ -92,6 +94,12 @@ resource "aws_iam_role_policy_attachment" "ecr-read" {
   count      = local.node_groups_enabled || local.managed_node_groups_enabled ? 1 : 0
   policy_arn = format("arn:%s:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly", data.aws_partition.current.partition)
   role       = aws_iam_role.ng.0.name
+}
+
+resource "aws_iam_role_policy_attachment" "extra" {
+  for_each   = { for key, val in var.policy_arns : key => val }
+  policy_arn = each.value
+  role       = aws_iam_role.ng[0].name
 }
 
 ## eks-optimized linux
@@ -327,7 +335,6 @@ provider "kubernetes" {
   host                   = aws_eks_cluster.cp.endpoint
   token                  = data.aws_eks_cluster_auth.cp.token
   cluster_ca_certificate = base64decode(aws_eks_cluster.cp.certificate_authority.0.data)
-  load_config_file       = false
 }
 
 resource "time_sleep" "wait" {
