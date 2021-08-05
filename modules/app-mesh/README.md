@@ -4,6 +4,7 @@
 ## Examples
 - [Learning AWS App Mesh](https://aws.amazon.com/blogs/compute/learning-aws-app-mesh/)
 - [AWS App Mesh Examples](https://github.com/aws/aws-app-mesh-examples)
+- [Getting started with AWS App Mesh and Amazon EKS](https://aws.amazon.com/blogs/containers/getting-started-with-app-mesh-and-eks/)
 
 ## Quickstart
 ### Setup
@@ -19,7 +20,6 @@ provider "helm" {
     host                   = module.eks.helmconfig.host
     token                  = module.eks.helmconfig.token
     cluster_ca_certificate = base64decode(module.eks.helmconfig.ca)
-    load_config_file       = false
   }
 }
 

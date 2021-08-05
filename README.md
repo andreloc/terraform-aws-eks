@@ -11,6 +11,8 @@
 - [Amazon EKS on AWS Graviton](https://github.com/Young-ook/terraform-aws-eks/blob/main/examples/arm64)
 - [Amazon EKS with Spot Instances](https://github.com/Young-ook/terraform-aws-eks/blob/main/examples/spot)
 - [Amazon ECR](https://github.com/Young-ook/terraform-aws-eks/blob/main/examples/ecr)
+- [AWS Fault Injection Simulator with AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm/blob/main/examples/fis)
+- [AWS Fault Injection Simulator with Amazon EKS](https://github.com/Young-ook/terraform-aws-eks/blob/main/examples/fis)
 
 ## Getting started
 ### AWS CLI
@@ -21,22 +23,33 @@ Follow the official guide to install and configure profiles.
 ### Terraform
 Infrastructure Engineering team is using terraform to build and manage infrastucure for DevOps. And we have a plan to migrate cloudformation termplate to terraform.
 
-To install Terraform, find the appropriate package (https://www.terraform.io/downloads.html) for your system and download it. Terraform is packaged as a zip archive and distributed as a single binary. Install Terraform by unzipping it and moving it to a directory included in your system's `PATH`.
+To install Terraform, find the appropriate package (https://www.terraform.io/downloads.html) for your system and download it. Terraform is packaged as a zip archive and distributed as a single binary. Install Terraform by unzipping it and moving it to a directory included in your system's `PATH`. The [tfenv](https://github.com/tfutils/tfenv) is very useful solution.
 
-And there is an another option for easy install. The [tfenv](https://github.com/tfutils/tfenv) is very useful solution.
+And there is an another option for easy install.
+```
+brew install tfenv
+```
 You can use this utility to make it ease to install and switch terraform binaries in your workspace like below.
 ```
-$ tfenv install 0.12.18
-$ tfenv use 0.12.18
+tfenv install 0.12.18
+tfenv use 0.12.18
 ```
 Also this tool is helpful to upgrade terraform v0.12. It is a major release focused on configuration language improvements and thus includes some changes that you'll need to consider when upgrading. But the version 0.11 and 0.12 are very different. So if some codes are written in older version and others are in 0.12 it would be great for us to have nice tool to support quick switching of version.
 ```
-$ tfenv list
-$ tfenv use 0.12.18
-$ tfenv use 0.11.14
-$ tfenv install latest
-$ tfenv use 0.12.18
+tfenv list
+tfenv use 0.12.18
+tfenv use 0.11.14
+tfenv install latest
+tfenv use 0.12.18
 ```
+
+### Kubernetes CLI
+Here is a simple way to install the kubernetes command line tool on your environment if you are on macOS.
+```
+brew install kubernetes-cli
+```
+
+For more information about kubernetes tools, please visit this [page](https://kubernetes.io/docs/tasks/tools/) and follow the **kubectl** instructions if you want to install tools.
 
 ### Setup
 ```hcl
@@ -48,8 +61,8 @@ module "eks" {
 ```
 Run terraform:
 ```
-$ terraform init
-$ terraform apply
+terraform init
+terraform apply
 ```
 ## Generate kubernetes config
 This terraform module provides users with a shell script that extracts the kubeconfig file of the EKS cluster. When users run the terraform init command in their workspace, the script is downloaded with the terraform module from the terraform registry. User can see how to run this script in terraform output after terraform apply command completes successfully. Using this script, users can easily obtain a kubeconfig file. So, they can use this kubeconfig file for access to the EKS cluster (with Spinnaker). The original script is here [update-kubeconfig.sh](https://github.com/Young-ook/terraform-aws-eks/blob/main/script/update-kubeconfig.sh) and users can check out the details of the script.

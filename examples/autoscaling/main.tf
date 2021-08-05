@@ -1,12 +1,11 @@
-# Complete example
+# Autoscaling example
 
 terraform {
   required_version = "0.13.5"
 }
 
 provider "aws" {
-  region              = var.aws_region
-  allowed_account_ids = [var.aws_account_id]
+  region = var.aws_region
 }
 
 # eks
@@ -18,6 +17,7 @@ module "eks" {
   managed_node_groups = var.managed_node_groups
   node_groups         = var.node_groups
   fargate_profiles    = var.fargate_profiles
+  enable_ssm          = var.enable_ssm
 }
 
 provider "helm" {
@@ -38,7 +38,7 @@ module "alb-ingress" {
 
 module "cluster-autoscaler" {
   source       = "Young-ook/eks/aws//modules/cluster-autoscaler"
-  enabled      = true
+  enabled      = module.eks.features.managed_node_groups_enabled || module.eks.features.node_groups_enabled
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
   tags         = { env = "test" }
@@ -54,7 +54,7 @@ module "container-insights" {
 
 module "metrics-server" {
   source       = "Young-ook/eks/aws//modules/metrics-server"
-  enabled      = true
+  enabled      = module.eks.features.managed_node_groups_enabled || module.eks.features.node_groups_enabled
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
   tags         = { env = "test" }
@@ -62,7 +62,7 @@ module "metrics-server" {
 
 module "prometheus" {
   source       = "../../modules/prometheus"
-  enabled      = false
+  enabled      = module.eks.features.managed_node_groups_enabled || module.eks.features.node_groups_enabled
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
   tags         = { env = "test" }
